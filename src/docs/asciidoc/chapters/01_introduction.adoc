@@ -1,0 +1,112 @@
+[background-color="#01303a"]
+== Gradle Introduction
+
+=== Who is Gradle Inc.?
+
+image::gradle-staff-map.png[width=1000,height=0%]
+
+=== What is Gradle?
+
+image::gradle-structure.png[width=1000,height=0%]
+
+=== Your Project as a Software Component
+
+[plantuml, components1, png, width=300, height=0%]
+....
+!include <cloudinsight/cog>
+scale 300 width
+
+skinparam monochrome true
+skinparam defaultTextAlignment center
+
+["<$cog> <$cog>\n   <$cog>"]
+....
+
+You define a model of your software project through a Java/Kotlin API
+
+Entry point: `org.gradle.api.Project`
+
+=== Authoring a Build
+
+`build.gradle.kts`
+[source,kotlin]
+----
+// empty file
+----
+
+`settings.gradle.kts`
+[source,kotlin]
+----
+rootProject.name = "kotlin-everywhere"
+----
+
+=== Authoring a Build
+
+`build.gradle.kts`
+[source,kotlin]
+----
+tasks.register("t1") {
+    inputs.dir("...")
+    ouptuts.file("...")
+    doLast {
+        // do some work
+    }
+}
+----
+
+`settings.gradle.kts`
+[source,kotlin]
+----
+rootProject.name = "kotlin-everywhere"
+----
+
+=== Extending the Gradle DSL
+
+`buildSrc/src/main/kotlin/MyProject.kt`
+[source,kotlin]
+----
+fun org.gradle.api.Project.configureMyProject() {
+    tasks.register("t1") {
+        inputs.dir("...")
+        ouptuts.file("...")
+        doLast {
+            // do some work
+        }
+    }
+}
+----
+
+`build.gradle.kts`
+[source,kotlin]
+----
+configureMyProject()
+----
+
+=== Your Project as multiple Software Components
+
+[plantuml, components5, png, width=500, height=0%]
+....
+!include <cloudinsight/cog>
+!include <cloudinsight/java>
+scale 500 width
+
+skinparam monochrome true
+skinparam defaultTextAlignment center
+
+[:user-data\n\n(<&cog> Java)]
+[:account-data\n\n(<&cog> Java)]
+[:services\n\n(<&cog> Kotlin)]
+[:desktop-app\n\n(<&cog> Kotlin)]
+[:android-app\n\n(<&cog> Android)]
+....
+
+`build.gradle.kts`
+[source,kotlin]
+----
+project(":user-data").plugins.apply("java")
+project(":account-data").plugins.apply("java")
+project(":services").plugins.apply("org.jetbrains.kotlin.jvm")
+project(":desktop-app").plugins.apply("org.jetbrains.kotlin.jvm")
+project(":android-app").plugins.apply("org.jetbrains.kotlin.android")
+project(":android-app").plugins.apply("com.android.application")
+----

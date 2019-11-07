@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-everywhere-2019-hh"
+rootProject.name = "kotlin-everywhere-2019-cologne"

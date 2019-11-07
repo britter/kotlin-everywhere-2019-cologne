@@ -3,8 +3,8 @@ plugins {
 }
 
 presentation {
-    githubUserName.set("jjohannes")
-    githubRepoName.set("kotlin-everywhere-2019-hh")
+    githubUserName.set("britter")
+    githubRepoName.set("kotlin-everywhere-2019-cologne")
 }
 
 dependencies {

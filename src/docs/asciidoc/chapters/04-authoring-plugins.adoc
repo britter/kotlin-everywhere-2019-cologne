@@ -1,0 +1,81 @@
+[background-color="#01303a"]
+== Tipps for authoring Plugins
+
+=== Writing a plugin in Kotlin
+
+Let's write a plugin that collects some names and then greets all those people.
+
+`buildSrc/src/main/kotlin/GreetingPlugin.kt`
+[source,kotlin]
+----
+data class Who(project: Project) {
+  val who = project.property<String>
+}
+
+val allWhos = mutableListOf<Who>()
+
+fun greet(configurer: (Who) -> Unit) {
+  val who = Who(project)
+  configurer(who)
+  allWhos.add(who.who.get())
+}
+
+project.tasks.add(GreetingTask::class.java, "greetings")
+----
+
+=== Using the plugin
+
+`build.gradle.kts`
+[source,kotlin]
+----
+plugins {
+  GreetingPlugin
+}
+
+greet {
+  who.set("Hello World")
+}
+----
+
+
+`build.gradle`
+[source,groovy]
+----
+plugins {
+  id 'GreetingPlugin'
+}
+
+// Doesn't work, type (Who) -> Unit is not accessible
+greet {
+  who = "Hello World"
+}
+----
+
+=== General Advice
+
+* Strongly type your plugin API even in Groovy
+* Your plugin might be used from either Groovy or Kotlin (or even Java!)
+* Don't use language specific types
+** Avoid groovy.lang.Closure
+** Avoid Kotlin lambdas
+* Use the built-in `org.gradle.api.Action` type
+
+=== Fixed plugin
+
+`buildSrc/src/main/kotlin/GreetingPlugin.kt`
+[source,kotlin]
+----
+data class Who(project: Project) {
+  val who = project.property<String>
+}
+
+val allWhos = mutableListOf<Who>()
+
+fun greet(action: Action<Who>) {
+  val who = Who(project)
+  action.execute(who)
+  allWhos.add(who.who.get())
+}
+
+project.tasks.add(GreetingTask::class.java, "greetings")
+----

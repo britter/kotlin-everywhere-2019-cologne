@@ -1,0 +1,77 @@
+[background-color="#01303a"]
+== Pre-compiled script plugins
+
+=== Managing Build configuration
+
+`subproject-a/build.gradle.kts`
+[source,kotlin]
+----
+plugins {
+    kotlin("jvm")
+}
+
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+    }
+}
+----
+
+What happens when we introduce `subproject-b`?
+
+=== Let's build a plugin for this!
+
+`buildSrc/src/main/kotlin/KotlinConvetions.kt`
+[source,kotlin]
+----
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+open class KotlinConventions: Plugin<Project> {
+  override fun apply(project: Project) {
+    project.plugins.apply("org.jetbrains.kotlin.jvm:1.3.50")
+    project.dependencies.add("implementation",
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50")
+    project.tasks.withType(KotlinCompile::class) {
+      kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+      }
+    }
+  }
+}
+----
+
+Very different developer experience from writing build scripts...
+
+=== Pre-compiled script plugins to the rescue!
+
+`buildSrc/src/main/kotlin/kotlin-conventions.kts`
+[source,kotlin]
+----
+plugins {
+    kotlin("jvm")
+}
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+}
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+    }
+}
+----
+
+`subproject-a/build.gradle.kts`
+[source,kotlin]
+----
+plugins {
+  `kotlin-conventions`
+}
+----

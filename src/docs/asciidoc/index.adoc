@@ -13,25 +13,26 @@ ifndef::sourcedir[:sourcedir: ../java]
 :revealjs_center: false
 :highlightjsdir: highlight
 
-= : Structure your Project with Gradle by using Kotlin Everywhere
+= : Authroing Gradle Builds with the Kotlin DSL
 
 +++<h3>+++
-KOTLIN/Everywhere Hamburg 2019
+KOTLIN/Everywhere Köln 2019
 +++</h3>+++
 
-== Who is Gradle?
+== Agenda
 
-image::gradle-staff-map.png[width=1000,height=0%]
+* Gradle Introduction
+* What powers the Gradle Kotlin DSL
+* Pre-compiled Script Plugins
+* Tipps for authoring Plugins
 
-== What is Gradle?
+include::chapters/01_introduction.adoc[]
 
-image::gradle-structure.png[width=1000,height=0%]
+include::chapters/02_kotlin-dsl.adoc[]
 
-include::chapters/01_basics.adoc[]
+include::chapters/03_precompiled-script-plugins.adoc[]
 
-include::chapters/02_variant_aware_dependency_management.adoc[]
-
-include::chapters/03_new_gradle_features.adoc[]
+include::chapters/04-authoring-plugins.adoc[]
 
 == Maybe try a Build Scan with Gradle Enterprise
 
@@ -41,25 +42,17 @@ image::scan-httpclient-comparison.png[width=800,height=0%]
 == Remember...
 
 * With Gradle you model your project through a Java/Kotlin API
-** `org.gradle.api.Project` (basic building blocks, apply plugins here)
-** `org.gradle.api.Task` (not covered today, let plugins add them)
-** `org.gradle.api.artifacts.Configuration` (good stuff is hidden here)
-
-* Use variants as interface between projects and modules
-** _Variant Attributes_ and _Capabilities_ 😳
-** Gradle 6.0 will go full steam on Gradle Module Metadata (GMM) 🚀
-** All new features shown are compatible with GMM 🥳
-** Configuration is the entry point (better APIs will follow) 🙈
+* The Kotlin DSL provides a staticly types facade to the underlying dynamic model
+* Pre-compiled script script plugin are a conventient way to structure your build
+* As a plugin author always use strong types but don't expose language specific ones
 
 == Thank you
 
-📽️ https://jjohannes.github.io/kotlin-everywhere-2019-hh[jjohannes.github.io/kotlin-everywhere-2019-hh]
+📽️ https://britter.github.io/kotlin-everywhere-2019-cologne[britter.github.io/kotlin-everywhere-2019-cologne]
 
 🐘 https://github.com/gradle/gradle[github.com/gradle/gradle]
 
-🕊️ https://twitter.com/jeoj[@jeoj]
+🕊️ https://twitter.com/BenediktRitter[@BenediktRitter]
 
-😺 https://github.com/jjohannes[@jjohannes]
-
-// include::chapters/04_extras.adoc[]
+😺 https://github.com/britter[@britter]
 

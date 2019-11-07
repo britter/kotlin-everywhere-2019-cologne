@@ -1,0 +1,139 @@
+[background-color="#01303a"]
+== What powers the Kotlin DSL
+
+=== Gradle <--> Kotlin
+
+* Gradle provides a dynamic model that
+** ... can be configured by build authors
+** ... can be extended by plugin authors
+* The Kotlin DSL provides
+** ... a statically typed facade on top of that model
+** ... support for authoring builds
+** ... the complete Gradle feature set
+
+=== Kotlin idioms in the DSL
+
+* Delegated Properties
+* Extension functions
+* Implicit receivers
+
+=== Delegated Properties
+
+`build.gradle.kts`
+[source,kotlin]
+----
+val myTask = tasks.register<Copy>("myTask") {
+    // configure copy
+}
+----
+
+vs.
+
+`build.gradle.kts`
+[source,kotlin]
+----
+val myTask: Copy by tasks.registering {
+    // configure copy
+}
+----
+
+=== Delegated Properties
+
+Works with all `DomainObjectContainers`
+
+`build.gradle.kts`
+[source,kotlin]
+----
+val integTest: SourceSet by sourceSets.creating {
+    compileClasspath = files(configurations.compileClasspath)
+    runtimeClasspath = files(configurations.runtimeClasspath)
+}
+
+val optionalDeps: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+----
+
+=== Extension functions
+
+`build.gradle.kts`
+[source,kotlin]
+----
+plugins {
+    java
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+----
+
+=== Extension functions
+
+`build.gradle.kts`
+[source,kotlin]
+----
+plugins {
+    java // where is this coming from?
+}
+
+java {  // where is this coming from?
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.test {  // where is this coming from?
+    useJUnitPlatform()
+}
+----
+
+=== Extension functions
+
+Somewhere inside the Kotlin DSL implementation (simplified)
+
+`build.gradle.kts`
+[source,kotlin]
+----
+val org.gradle.plugin.use.PluginDependenciesSpec.`java`
+
+fun org.gradle.api.Project.java(configure: Action<JavaPluginExtension>)
+
+val org.gradle.api.TaskContainer.`test`: TaskProvider<Test>
+----
+
+DSL extensions for plugins that are added to the build are generated on the fly!
+
+=== Implicit receivers
+
+Let's take a step back and think about build scripts again...
+
+`build.gradle.kts`
+[source,kotlin]
+----
+tasks.test {
+    useJUnitPlatform()
+}
+----
+
+* Where is `tasks` coming from?
+* Who is the receiver of the `useJUnitPlatform()` call?
+
+=== Inside Kotlin build scripts...
+
+* Project is set as an implicit receiver
+* All types from the Gradle API are implcitiyl imported
+* Configuration lambdas have an implicit receiver of the type that is configured
+
+`build.gradle.kts`
+[source,kotlin]
+----
+project.tasks.test { test ->
+    test.useJUnitPlatform()
+}
+----
