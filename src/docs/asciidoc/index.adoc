@@ -13,7 +13,7 @@ ifndef::sourcedir[:sourcedir: ../java]
 :revealjs_center: false
 :highlightjsdir: highlight
 
-= : Authroing Gradle Builds with the Kotlin DSL
+= : Authoring Gradle Builds with the Kotlin DSL
 
 +++<h3>+++
 KOTLIN/Everywhere Köln 2019
