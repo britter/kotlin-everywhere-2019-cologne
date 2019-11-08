@@ -14,9 +14,9 @@ data class Who(project: Project) {
 
 val allWhos = mutableListOf<Who>()
 
-fun greet(configurer: Who.() -> Unit) {
+fun greet(configure: Who.() -> Unit) {
   val who = Who(project)
-  configurer(who)
+  who.configure()
   allWhos.add(who.who.get())
 }
 

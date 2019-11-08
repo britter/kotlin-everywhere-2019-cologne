@@ -121,7 +121,7 @@ tasks.test {
 [source,kotlin]
 ----
 plugins {
-    java // where is this coming from?
+    java
 }
 
 java { // where is this coming from?
