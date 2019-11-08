@@ -14,7 +14,7 @@ data class Who(project: Project) {
 
 val allWhos = mutableListOf<Who>()
 
-fun greet(configurer: (Who) -> Unit) {
+fun greet(configurer: Who.() -> Unit) {
   val who = Who(project)
   configurer(who)
   allWhos.add(who.who.get())
@@ -45,7 +45,7 @@ plugins {
   id 'GreetingPlugin'
 }
 
-// Doesn't work, type (Who) -> Unit is not accessible
+// Doesn't work, type Who.() -> Unit is not accessible
 greet {
   who = "Hello World"
 }

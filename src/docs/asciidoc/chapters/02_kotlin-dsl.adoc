@@ -19,6 +19,25 @@
 
 === Delegated Properties
 
+Delegated properties are syntactic sugar for accessing values of a certain type.
+Values can be accessed using the `by` keyword if the containing object implements:
+
+[source,kotlin]
+----
+fun getValue(thisRef: Any?, property: KProperty<*>): T
+----
+
+This works for example for Maps:
+
+[source,kotlin]
+----
+val map = mapOf("name" to "Benedikt")
+val name: String by map
+println(name) // prints "Benedikt"
+----
+
+=== Delegated Properties in Gradle
+
 `build.gradle.kts`
 [source,kotlin]
 ----
@@ -37,7 +56,7 @@ val myTask: Copy by tasks.registering {
 }
 ----
 
-=== Delegated Properties
+=== Delegated Properties in Gradle
 
 Works with all `DomainObjectContainers`
 
@@ -57,6 +76,28 @@ val optionalDeps: Configuration by configurations.creating {
 
 === Extension functions
 
+Extend any class with additional functionality:
+
+`StringExtensions.kt`
+[source,kotlin]
+----
+fun String.capitalize() {
+    // go through this string and make first characters upper case
+}
+----
+
+`SomeClass.kt`
+[source,kotlin]
+----
+import capitalize
+
+fun someMethod(str: String)
+    str.capitalize()
+}
+----
+
+=== Extension functions in Gradle
+
 `build.gradle.kts`
 [source,kotlin]
 ----
@@ -74,7 +115,7 @@ tasks.test {
 }
 ----
 
-=== Extension functions
+=== Extension functions in Gradle
 
 `build.gradle.kts`
 [source,kotlin]
@@ -83,17 +124,17 @@ plugins {
     java // where is this coming from?
 }
 
-java {  // where is this coming from?
+java { // where is this coming from?
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.test {  // where is this coming from?
+tasks.test {  // where is test coming from?
     useJUnitPlatform()
 }
 ----
 
-=== Extension functions
+=== Extension functions in Gradle
 
 Somewhere inside the Kotlin DSL implementation (simplified)
 
@@ -109,7 +150,24 @@ val org.gradle.api.TaskContainer.`test`: TaskProvider<Test>
 
 DSL extensions for plugins that are added to the build are generated on the fly!
 
-=== Implicit receivers
+=== Receivers in Kotlin
+
+The receiver of a call is the object the call will executed against.
+
+[source,kotlin]
+----
+class Guitar {
+
+    fun playTune() { }
+
+    fun playSong(): {
+        playTune() // implicit receiver
+        this.playTune() // explicit receiver
+    }
+}
+----
+
+=== Implicit receivers in Gradle
 
 Let's take a step back and think about build scripts again...
 
@@ -127,7 +185,7 @@ tasks.test {
 === Inside Kotlin build scripts...
 
 * Project is set as an implicit receiver
-* All types from the Gradle API are implcitiyl imported
+* All types from the Gradle API are implicitly imported
 * Configuration lambdas have an implicit receiver of the type that is configured
 
 `build.gradle.kts`
