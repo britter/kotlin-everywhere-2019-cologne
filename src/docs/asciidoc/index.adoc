@@ -16,7 +16,7 @@ ifndef::sourcedir[:sourcedir: ../java]
 = : Authoring Gradle Builds with the Kotlin DSL
 
 +++<h3>+++
-KOTLIN/Everywhere Köln 2019
+KOTLIN/Everywhere Cologne 2019
 +++</h3>+++
 
 == About me
