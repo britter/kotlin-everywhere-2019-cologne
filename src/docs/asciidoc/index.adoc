@@ -19,6 +19,16 @@ ifndef::sourcedir[:sourcedir: ../java]
 KOTLIN/Everywhere Köln 2019
 +++</h3>+++
 
+== About me
+
+Benedikt Ritter - Senior Software Engineer at Gradle Inc.
+
+🕊️ https://twitter.com/BenediktRitter[@BenediktRitter]
+
+😺 https://github.com/britter[@britter]
+
+🎙 https://autoweird.fm[autoweird.fm]
+
 == Agenda
 
 * Gradle Introduction
@@ -56,3 +66,4 @@ image::scan-httpclient-comparison.png[width=800,height=0%]
 
 😺 https://github.com/britter[@britter]
 
+🎙 https://autoweird.fm[autoweird.fm]
