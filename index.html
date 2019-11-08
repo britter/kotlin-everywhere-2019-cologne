@@ -58,7 +58,13 @@ project(":services").plugins.apply("org.jetbrains.kotlin.jvm")
 project(":desktop-app").plugins.apply("org.jetbrains.kotlin.jvm")
 project(":android-app").plugins.apply("org.jetbrains.kotlin.android")
 project(":android-app").plugins.apply("com.android.application")</code></pre></section></section>
-<section><section id="what-powers-the-kotlin-dsl" data-transition="none" data-background-color="#01303a"><h2>What powers the Kotlin DSL</h2></section><section id="gradle-kotlin" data-transition="none"><h2>Gradle &#8592;&#8594; Kotlin</h2><div class="ulist"><ul><li><p>Gradle provides a dynamic model that</p><div class="ulist"><ul><li><p>&#8230;&#8203; can be configured by build authors</p></li><li><p>&#8230;&#8203; can be extended by plugin authors</p></li></ul></div></li><li><p>The Kotlin DSL provides</p><div class="ulist"><ul><li><p>&#8230;&#8203; a statically typed facade on top of that model</p></li><li><p>&#8230;&#8203; support for authoring builds</p></li><li><p>&#8230;&#8203; the complete Gradle feature set</p></li></ul></div></li></ul></div></section><section id="kotlin-idioms-in-the-dsl" data-transition="none"><h2>Kotlin idioms in the DSL</h2><div class="ulist"><ul><li><p>Delegated Properties</p></li><li><p>Extension functions</p></li><li><p>Implicit receivers</p></li></ul></div></section><section id="delegated-properties" data-transition="none"><h2>Delegated Properties</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
+<section><section id="what-powers-the-kotlin-dsl" data-transition="none" data-background-color="#01303a"><h2>What powers the Kotlin DSL</h2></section><section id="gradle-kotlin" data-transition="none"><h2>Gradle &#8592;&#8594; Kotlin</h2><div class="ulist"><ul><li><p>Gradle provides a dynamic model that</p><div class="ulist"><ul><li><p>&#8230;&#8203; can be configured by build authors</p></li><li><p>&#8230;&#8203; can be extended by plugin authors</p></li></ul></div></li><li><p>The Kotlin DSL provides</p><div class="ulist"><ul><li><p>&#8230;&#8203; a statically typed facade on top of that model</p></li><li><p>&#8230;&#8203; support for authoring builds</p></li><li><p>&#8230;&#8203; the complete Gradle feature set</p></li></ul></div></li></ul></div></section><section id="kotlin-idioms-in-the-dsl" data-transition="none"><h2>Kotlin idioms in the DSL</h2><div class="ulist"><ul><li><p>Delegated Properties</p></li><li><p>Extension functions</p></li><li><p>Implicit receivers</p></li></ul></div></section><section id="delegated-properties" data-transition="none"><h2>Delegated Properties</h2><div class="paragraph"><p>Delegated properties are syntactic sugar for accessing values of a certain type.
+Values can be accessed using the <code>by</code> keyword if the containing object implements:</p></div>
+<pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">fun getValue(thisRef: Any?, property: KProperty&lt;*&gt;): T</code></pre>
+<div class="paragraph"><p>This works for example for Maps:</p></div>
+<pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">val map = mapOf("name" to "Benedikt")
+val name: String by map
+println(name) // prints "Benedikt"</code></pre></section><section id="delegated-properties-in-gradle" data-transition="none"><h2>Delegated Properties in Gradle</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">val myTask = tasks.register&lt;Copy&gt;("myTask") {
     // configure copy
 }</code></pre>
@@ -66,7 +72,7 @@ project(":android-app").plugins.apply("com.android.application")</code></pre></s
 <div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">val myTask: Copy by tasks.registering {
     // configure copy
-}</code></pre></section><section id="delegated-properties-2" data-transition="none"><h2>Delegated Properties</h2><div class="paragraph"><p>Works with all <code>DomainObjectContainers</code></p></div>
+}</code></pre></section><section id="delegated-properties-in-gradle-2" data-transition="none"><h2>Delegated Properties in Gradle</h2><div class="paragraph"><p>Works with all <code>DomainObjectContainers</code></p></div>
 <div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">val integTest: SourceSet by sourceSets.creating {
     compileClasspath = files(configurations.compileClasspath)
@@ -76,7 +82,17 @@ project(":android-app").plugins.apply("com.android.application")</code></pre></s
 val optionalDeps: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
-}</code></pre></section><section id="extension-functions" data-transition="none"><h2>Extension functions</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
+}</code></pre></section><section id="extension-functions" data-transition="none"><h2>Extension functions</h2><div class="paragraph"><p>Extend any class with additional functionality:</p></div>
+<div class="paragraph"><p><code>StringExtensions.kt</code></p></div>
+<pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">fun String.capitalize() {
+    // go through this string and make first characters upper case
+}</code></pre>
+<div class="paragraph"><p><code>SomeClass.kt</code></p></div>
+<pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">import capitalize
+
+fun someMethod(str: String)
+    str.capitalize()
+}</code></pre></section><section id="extension-functions-in-gradle" data-transition="none"><h2>Extension functions in Gradle</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">plugins {
     java
 }
@@ -88,31 +104,40 @@ java {
 
 tasks.test {
     useJUnitPlatform()
-}</code></pre></section><section id="extension-functions-2" data-transition="none"><h2>Extension functions</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
+}</code></pre></section><section id="extension-functions-in-gradle-2" data-transition="none"><h2>Extension functions in Gradle</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">plugins {
     java // where is this coming from?
 }
 
-java {  // where is this coming from?
+java { // where is this coming from?
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.test {  // where is this coming from?
+tasks.test {  // where is test coming from?
     useJUnitPlatform()
-}</code></pre></section><section id="extension-functions-3" data-transition="none"><h2>Extension functions</h2><div class="paragraph"><p>Somewhere inside the Kotlin DSL implementation (simplified)</p></div>
+}</code></pre></section><section id="extension-functions-in-gradle-3" data-transition="none"><h2>Extension functions in Gradle</h2><div class="paragraph"><p>Somewhere inside the Kotlin DSL implementation (simplified)</p></div>
 <div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">val org.gradle.plugin.use.PluginDependenciesSpec.`java`
 
 fun org.gradle.api.Project.java(configure: Action&lt;JavaPluginExtension&gt;)
 
 val org.gradle.api.TaskContainer.`test`: TaskProvider&lt;Test&gt;</code></pre>
-<div class="paragraph"><p>DSL extensions for plugins that are added to the build are generated on the fly!</p></div></section><section id="implicit-receivers" data-transition="none"><h2>Implicit receivers</h2><div class="paragraph"><p>Let&#8217;s take a step back and think about build scripts again&#8230;&#8203;</p></div>
+<div class="paragraph"><p>DSL extensions for plugins that are added to the build are generated on the fly!</p></div></section><section id="receivers-in-kotlin" data-transition="none"><h2>Receivers in Kotlin</h2><div class="paragraph"><p>The receiver of a call is the object the call will executed against.</p></div>
+<pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">class Guitar {
+
+    fun playTune() { }
+
+    fun playSong(): {
+        playTune() // implicit receiver
+        this.playTune() // explicit receiver
+    }
+}</code></pre></section><section id="implicit-receivers-in-gradle" data-transition="none"><h2>Implicit receivers in Gradle</h2><div class="paragraph"><p>Let&#8217;s take a step back and think about build scripts again&#8230;&#8203;</p></div>
 <div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">tasks.test {
     useJUnitPlatform()
 }</code></pre>
-<div class="ulist"><ul><li><p>Where is <code>tasks</code> coming from?</p></li><li><p>Who is the receiver of the <code>useJUnitPlatform()</code> call?</p></li></ul></div></section><section id="inside-kotlin-build-scripts" data-transition="none"><h2>Inside Kotlin build scripts&#8230;&#8203;</h2><div class="ulist"><ul><li><p>Project is set as an implicit receiver</p></li><li><p>All types from the Gradle API are implcitiyl imported</p></li><li><p>Configuration lambdas have an implicit receiver of the type that is configured</p></li></ul></div>
+<div class="ulist"><ul><li><p>Where is <code>tasks</code> coming from?</p></li><li><p>Who is the receiver of the <code>useJUnitPlatform()</code> call?</p></li></ul></div></section><section id="inside-kotlin-build-scripts" data-transition="none"><h2>Inside Kotlin build scripts&#8230;&#8203;</h2><div class="ulist"><ul><li><p>Project is set as an implicit receiver</p></li><li><p>All types from the Gradle API are implicitly imported</p></li><li><p>Configuration lambdas have an implicit receiver of the type that is configured</p></li></ul></div>
 <div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">project.tasks.test { test -&gt;
     test.useJUnitPlatform()
@@ -174,7 +199,7 @@ tasks.withType&lt;KotlinCompile&gt; {
 
 val allWhos = mutableListOf&lt;Who&gt;()
 
-fun greet(configurer: (Who) -&gt; Unit) {
+fun greet(configurer: Who.() -&gt; Unit) {
   val who = Who(project)
   configurer(who)
   allWhos.add(who.who.get())
@@ -193,7 +218,7 @@ greet {
   id 'GreetingPlugin'
 }
 
-// Doesn't work, type (Who) -&gt; Unit is not accessible
+// Doesn't work, type Who.() -&gt; Unit is not accessible
 greet {
   who = "Hello World"
 }</code></pre></section><section id="general-advice" data-transition="none"><h2>General Advice</h2><div class="ulist"><ul><li><p>Strongly type your plugin API even in Groovy</p></li><li><p>Your plugin might be used from either Groovy or Kotlin (or even Java!)</p></li><li><p>Don&#8217;t use language specific types</p><div class="ulist"><ul><li><p>Avoid groovy.lang.Closure</p></li><li><p>Avoid Kotlin lambdas</p></li></ul></div></li><li><p>Use the built-in <code>org.gradle.api.Action</code> type</p></li></ul></div></section><section id="fixed-plugin" data-transition="none"><h2>Fixed plugin</h2><div class="paragraph"><p><code>buildSrc/src/main/kotlin/GreetingPlugin.kt</code></p></div>
