@@ -106,7 +106,7 @@ tasks.test {
     useJUnitPlatform()
 }</code></pre></section><section id="extension-functions-in-gradle-2" data-transition="none"><h2>Extension functions in Gradle</h2><div class="paragraph"><p><code>build.gradle.kts</code></p></div>
 <pre class="highlight listingblock"><code data-noescape="" class="kotlin language-kotlin">plugins {
-    java // where is this coming from?
+    java
 }
 
 java { // where is this coming from?
@@ -199,9 +199,9 @@ tasks.withType&lt;KotlinCompile&gt; {
 
 val allWhos = mutableListOf&lt;Who&gt;()
 
-fun greet(configurer: Who.() -&gt; Unit) {
+fun greet(configure: Who.() -&gt; Unit) {
   val who = Who(project)
-  configurer(who)
+  who.configure()
   allWhos.add(who.who.get())
 }
 
